@@ -1,84 +1,91 @@
 import pylab as P
+import numpy as np
+import matplotlib
 
+def iteruj(dane, AB):
+    dane = np.dot(AB, dane)
+    return dane
+matplotlib.rc('font', family='Arial')
+np.set_printoptions(precision=3)
+P.set_printoptions(precision=3)
+dlugos = 100
+szerokosc = 5
+glebokosc = 1
+dx = 0.1
+dt = 0.1
+x = int(dlugos / dx)
+c = P.zeros(x)
+c[:] = 0.0
+i = int(10 / dx)
+d = int(90 / dx)
+c[i] = 1.0 / (dx * szerokosc * glebokosc)
+n = int(100 / dt)
+Ca = 0.1 * dt / dx
+Cd = 0.01 * dt / (dx ** 2.0)
+z = []
+ro = []
+AA = np.zeros([x, n])
+BB = np.zeros([x, n])
+for i in range(1, n - 1):
+    AA[i, i] = 1.0 + Cd
+    AA[i, i - 1] = -Cd * 0.5 - Ca * 0.25
+    AA[i - 1, i] = -Cd * 0.5 + Ca * 0.25
 
+    BB[i, i] = 1.0 - Cd
+    BB[i, i - 1] = Cd * 0.5 + Ca * 0.25
+    BB[i - 1, i] = Cd * 0.5 - Ca * 0.25
 
-def iteruj(dane,AB):
-	dane=P.dot(AB,dane)
-	return dane			
+AA[0, 0], AA[-1, -1] = [1.0 + Cd, 1.0 + Cd]
+AA[-1, -2] = -Cd * 0.5 - Ca * 0.25
+AA[-2, -1] = -Cd * 0.5 + Ca * 0.25
 
-dlugos=100
-szerokosc=5
-glebokosc=1
-dx=0.01
-dt=0.1
+BB[0, 0], BB[-1, -1] = [1.0 - Cd, 1.0 - Cd]
+BB[-1, -2] = Cd * 0.5 + Ca * 0.25
+BB[-2, -1] = Cd * 0.5 - Ca * 0.25
+AA = np.linalg.inv(AA)
+AB = np.dot(AA, BB)
 
-
-i=int(10/dx)
-d=int(90/dx)
-
-n=int(1000/dt)
-x=int(dlugos/dx)
-c=P.zeros([int(dlugos/dx)])
-c[:]=0.0
-c[i]=1.0/(dx*szerokosc*glebokosc)
-Ca=0.1*dt/dx
-Cd=0.01*dt/(dx**2.0)
-z=[]
-ro=[]
 f, axarr = P.subplots(3, 1)
 
-AA=P.zeros([x,n])
-BB=P.zeros([x,n])
-for i in range(1,x-1):
-		AA[i,i]=1+Cd
-		AA[i,i+1]=-Cd*0.5+0.25*Ca
-		AA[i,i-1]=-Cd*0.5-0.25*Ca
+subResults=[]
+for x in range(10000):
+    c = iteruj(c, AB)
+    z.append(c[d])
+    ro.append(P.sum(c[:] * (dx * szerokosc * glebokosc)))
+    if x % 1000 ==0:
+        subResults.append(np.copy(c))
+z=np.array(z)
+ro=np.array(ro)
+for i,x in enumerate(subResults[1:]):
+    axarr[0].plot(x,label="Po czasie {0}s".format(i*1000*dt))
+axarr[0].text(.5,.9,u'gęstośc w czasie',horizontalalignment='center',transform=axarr[0].transAxes)
+axarr[0].set_xlabel(u'połozenie')
+axarr[0].set_ylabel(u'gęstosc')
+axarr[0].legend(loc='upper left', shadow=True,prop={'size':7})
 
-		BB[i,i]=1-Cd
-		BB[i,i+1]=Cd*0.5-0.25*Ca
-		BB[i,i-1]=Cd*0.5+0.25*Ca
-		
-
-AA[0,0]=1+Cd
-AA[-1,-1]=1+Cd
-AA[0,1]=-Cd*0.5+0.25*Ca
-AA[-1,-2]=-Cd*0.5-0.25*Ca
-
-BB[0,0]=1-Cd
-BB[-1,-1]=1-Cd
-BB[0,1]=Cd*0.5-0.25*Ca
-BB[-1,-2]-Cd*0.5+0.25*Ca
-
-AA1=P.linalg.inv(AA)
-AB=P.dot(AA1,BB)
-
-AB[:,-2]=1.0
-
-
-
-for x in range(n):
-	c=iteruj(c,AB)
-	z.append(c[d])
-	ro.append(P.sum(c[:]*(dx*szerokosc*glebokosc)))
-
-print(c)
-axarr[0].plot(c)
-axarr[0].set_title('Po czasie {0}'.format(n*dt))
-axarr[0].set_xlabel('polozenie')
-axarr[0].set_ylabel('gestosc')
-"""
 axarr[1].plot(z)
-axarr[1].set_title('Gestosc czytnik')
+
+axarr[1].text(.5,.9,u'Gestosc czytnik',horizontalalignment='center',transform=axarr[1].transAxes)
 axarr[1].set_xlabel('czas')
 axarr[1].set_ylabel('gestosc')
 
+
 axarr[2].plot(ro)
-axarr[2].set_title('Masa ogolna')
+axarr[2].text(.5,.9,u'Masa ogolna',horizontalalignment='center',transform=axarr[2].transAxes)
 axarr[2].set_xlabel('czas')
-axarr[2].set_ylabel('masa')"""
-"""skrypty
-dwa rozwiazania rms
-przeanalizowac zgodnosc miedzy modelami (przewaza D lub U)
+axarr[2].set_ylabel('masa')
+f.tight_layout(pad=0.4, h_pad=1.0)
+
+"""
+    Graniczne
+    dt
+czyste
+U
+i
+czyste
+D
+Metoda
+weryfikacji
 """
 
-P.show()
+P.savefig("zad1.png")
