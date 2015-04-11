@@ -1,0 +1,84 @@
+import pylab as P
+
+
+
+def iteruj(dane,AB):
+	dane=P.dot(AB,dane)
+	return dane			
+
+dlugos=100
+szerokosc=5
+glebokosc=1
+dx=0.01
+dt=0.1
+
+
+i=int(10/dx)
+d=int(90/dx)
+
+n=int(1000/dt)
+x=int(dlugos/dx)
+c=P.zeros([int(dlugos/dx)])
+c[:]=0.0
+c[i]=1.0/(dx*szerokosc*glebokosc)
+Ca=0.1*dt/dx
+Cd=0.01*dt/(dx**2.0)
+z=[]
+ro=[]
+f, axarr = P.subplots(3, 1)
+
+AA=P.zeros([x,n])
+BB=P.zeros([x,n])
+for i in range(1,x-1):
+		AA[i,i]=1+Cd
+		AA[i,i+1]=-Cd*0.5+0.25*Ca
+		AA[i,i-1]=-Cd*0.5-0.25*Ca
+
+		BB[i,i]=1-Cd
+		BB[i,i+1]=Cd*0.5-0.25*Ca
+		BB[i,i-1]=Cd*0.5+0.25*Ca
+		
+
+AA[0,0]=1+Cd
+AA[-1,-1]=1+Cd
+AA[0,1]=-Cd*0.5+0.25*Ca
+AA[-1,-2]=-Cd*0.5-0.25*Ca
+
+BB[0,0]=1-Cd
+BB[-1,-1]=1-Cd
+BB[0,1]=Cd*0.5-0.25*Ca
+BB[-1,-2]-Cd*0.5+0.25*Ca
+
+AA1=P.linalg.inv(AA)
+AB=P.dot(AA1,BB)
+
+AB[:,-2]=1.0
+
+
+
+for x in range(n):
+	c=iteruj(c,AB)
+	z.append(c[d])
+	ro.append(P.sum(c[:]*(dx*szerokosc*glebokosc)))
+
+print(c)
+axarr[0].plot(c)
+axarr[0].set_title('Po czasie {0}'.format(n*dt))
+axarr[0].set_xlabel('polozenie')
+axarr[0].set_ylabel('gestosc')
+"""
+axarr[1].plot(z)
+axarr[1].set_title('Gestosc czytnik')
+axarr[1].set_xlabel('czas')
+axarr[1].set_ylabel('gestosc')
+
+axarr[2].plot(ro)
+axarr[2].set_title('Masa ogolna')
+axarr[2].set_xlabel('czas')
+axarr[2].set_ylabel('masa')"""
+"""skrypty
+dwa rozwiazania rms
+przeanalizowac zgodnosc miedzy modelami (przewaza D lub U)
+"""
+
+P.show()
