@@ -47,16 +47,15 @@ AB = np.dot(AA, BB)
 
 f, axarr = P.subplots(3, 1)
 
-subResults=[]
+subResults1=[]
 for x in range(10000):
     c = iteruj(c, AB)
     z.append(c[d])
     ro.append(P.sum(c[:] * (dx * szerokosc * glebokosc)))
-    if x % 1000 ==0:
-        subResults.append(np.copy(c))
+    subResults1.append(np.copy(c))
 z=np.array(z)
 ro=np.array(ro)
-for i,x in enumerate(subResults[1:]):
+"""for i,x in enumerate(subResults1[1:]):
     axarr[0].plot(x,label="Po czasie {0}s".format(i*1000*dt))
 axarr[0].text(.5,.9,u'gęstośc w czasie',horizontalalignment='center',transform=axarr[0].transAxes)
 axarr[0].set_xlabel(u'połozenie')
@@ -76,16 +75,5 @@ axarr[2].set_xlabel('czas')
 axarr[2].set_ylabel('masa')
 f.tight_layout(pad=0.4, h_pad=1.0)
 
-"""
-    Graniczne
-    dt
-czyste
-U
-i
-czyste
-D
-Metoda
-weryfikacji
-"""
-
 P.savefig("zad1.png")
+"""
