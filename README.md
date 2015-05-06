@@ -4,3 +4,4 @@ Potrzebne biblioteki:
 numpy
 scipy
 matplotlib
+pandas
