@@ -8,19 +8,19 @@ def iteruj(dane, AB):
 matplotlib.rc('font', family='Arial')
 np.set_printoptions(precision=3)
 P.set_printoptions(precision=3)
-dlugos = 100
-szerokosc = 5
-glebokosc = 1
-dx = 0.1
+dlugos = 4.3
+szerokosc = 0.075
+glebokosc = 0.035
+dx = 0.01
 dt = 0.1
 x = int(dlugos / dx)
 c = P.zeros(x)
 c[:] = 0.0
-i = int(10 / dx)
-d = int(90 / dx)
-c[i] = 1.0 / (dx * szerokosc * glebokosc)
-n = int(100 / dt)
-Ca = 0.1 * dt / dx
+i = int(0.1 / dx)
+d = int(4 / dx)-1
+c[i] = 1.04 / (dx * szerokosc * glebokosc)
+n = int(4.3 / dt)
+Ca = 0.085 * dt / dx
 Cd = 0.01 * dt / (dx ** 2.0)
 z = []
 ro = []
@@ -55,7 +55,7 @@ for x in range(10000):
     subResults1.append(np.copy(c))
 z=np.array(z)
 ro=np.array(ro)
-"""for i,x in enumerate(subResults1[1:]):
+for i,x in enumerate(subResults1[1:]):
     axarr[0].plot(x,label="Po czasie {0}s".format(i*1000*dt))
 axarr[0].text(.5,.9,u'gęstośc w czasie',horizontalalignment='center',transform=axarr[0].transAxes)
 axarr[0].set_xlabel(u'połozenie')
@@ -76,4 +76,4 @@ axarr[2].set_ylabel('masa')
 f.tight_layout(pad=0.4, h_pad=1.0)
 
 P.savefig("zad1.png")
-"""
+
